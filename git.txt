@@ -190,3 +190,7 @@ git merge (Needed to merge the update with the local branch)
 *** Da approfondire ***
 
 -- Git Pull with Rebase --
+Local git maintains not only local repositories but also local copies of remote repositories.
+Sometimes it's easier not to merge in the upstream content but reapplying own changes on top of the upcoming commits.
+For small changesets, history stays cleaner and linear using a pull with rebase. For longer feature set, traditional git pull is more approprieate.
+git pull --rebase origin master
