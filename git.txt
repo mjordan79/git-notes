@@ -42,7 +42,6 @@ git branch (available branches with the one currently selected)
 git branch <newbranch> (creates a new branch, still not active)
 git checkout <newbranch> (makes newbranch the active branch)
 
-
 - 8 - Undoing changes
 --- git checkout commits ---
 git add . (add everything for staging in the current dir)
@@ -194,3 +193,66 @@ Local git maintains not only local repositories but also local copies of remote 
 Sometimes it's easier not to merge in the upstream content but reapplying own changes on top of the upcoming commits.
 For small changesets, history stays cleaner and linear using a pull with rebase. For longer feature set, traditional git pull is more approprieate.
 git pull --rebase origin master
+
+-- git reflog --
+reflog is a short git term for reference logs. reflogs in git see a new entry for every operation that updates the HEAD: commits, branches, etc.
+It records nearly every change someone do to his repository. It's a sort of chronological history for everthing has been done in the local repo.
+reflogs are only local. A newly cloned repo will see an empty reflog.
+
+$ git reflog
+
+374ea7b8 (HEAD -> master, origin/master, origin/HEAD) HEAD@{0}: checkout: moving from release-2.9 to master
+fc1edbe7 (origin/release-2.9, release-2.9) HEAD@{1}: checkout: moving from master to release-2.9
+374ea7b8 (HEAD -> master, origin/master, origin/HEAD) HEAD@{2}: checkout: moving from remotes/origin/release-2.9 to master
+...
+7d8da834 (tag: v2.10.4, origin/release-2.10, release-2.10) HEAD@{9}: checkout: moving from master to release-2.10
+
+Each event or activity is stored in the reflog. It's a temporary history that contains even informations about time.
+To see informations about a reflog, one can use the command:
+
+git show HEAD@{6} (Shows all informations about the event: what's happened, file diffs, author, etc.)
+
+reflogs contains information about time, it allows to "time travel" in history. For example:
+
+The time can be expressed like:
+1.minute.ago
+1.hour.ago
+1.day.ago
+yesterday
+1.week.ago
+1.month.ago
+1.year.ago
+2.months.ago
+1.day.2.hours.ago
+2019-05-17.09:00:00
+
+Examples:
+git diff @{1.hour.ago}
+git show master@{5.days.ago}
+
+Other than the raw 'git reflog' command, it's possible to include reflogs in the 'git log' command too:
+git log -g [branch_name]
+This for example will show more informations: reflogs store even amended commits, for example.
+For example, git show HEAD@{2.months.ago}
+works only if the repository has been cloned at least 2 months ago.
+reflogs are stored inside the local repo in .git/logs
+
+reflogs can be used to revert destructive operations. It's important to note that:
+HEAD^ corresponds to the previous commit.
+HEAD~n corresponds to the nth previous commit.
+but to refer to reflogs, the following syntax can be used:
+HEAD@{n} where n is the number of the reflog.
+
+In a 3 commit history where 01f12c7 is the commit-id of the first commit, a destructive operation like:
+git reset --hard 01f12c7
+will destroy the last 2 commits and history, losing data permanently.
+To restore:
+git checkout HEAD@{1} (this will put in a detached head state, so to restore we need to open a new branch)
+git checkout -b restore-branch
+git checkout master
+git merge restore-branch
+git merge -d restore-branch
+
+
+
+
