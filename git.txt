@@ -1,0 +1,192 @@
+- Concepts
+Working directory
+Staging area (or index)
+Commit area
+git server
+
+- Configuring basic data.
+
+git config --global --list
+git config --global user.name "Renato Perini"
+git config --global user.email "user@domain.com"
+
+Configs are stored in ~/.gitconfig
+
+- 3 - Initialize a repository.
+
+git init
+
+- 4 - Getting help.
+git help
+git help -a (subcommands)
+git help -g (concept guides)
+git help <command>
+git help <concept>
+
+- 5 - Committing files
+git status 
+git status -s
+git add <filename> (staging file)
+git rm --cached <filename> (unstaging file)
+git commit -m "Commit Message"
+
+- 6 - Inspecting a git repository
+git log (commit history with commit id)
+git log --oneline (contracted form)
+git log <filename> (commit history for the file)
+git log <since>..<until> (commit history between two commit id, since excluded)
+git log -n 3 --oneline (just last 3 commits in contracted form)
+
+- 7 - Branching Basics
+git branch (available branches with the one currently selected)
+git branch <newbranch> (creates a new branch, still not active)
+git checkout <newbranch> (makes newbranch the active branch)
+
+
+- 8 - Undoing changes
+--- git checkout commits ---
+git add . (add everything for staging in the current dir)
+git commit -am "Commit message" (add everything and commit at the same time)
+HEAD points to the final commit in the commit history
+git checkout <commit-id> (goes back in history at specific commit-id. Put in the detached HEAD state)
+It's a readonly operation. Impossible to harm the repository. All operations committed into this state
+must be committed in a separate branch to be retained with git checkout -b <newbranch>)
+git checkout master (going back to master from a detached head state)
+
+--- git checkout files ---
+git checkout <commit-id> <filename> (Porta il file allo stato del commit-id (revert). Il file viene effettivamente modificato, messo in staging e pronto per il commit)
+git checkout HEAD <filename> (Riporta il file allo stato attuale dell'ultimo commit.)
+git revert HEAD (su file committato, riporta il file allo stato precedente, facendo un nuovo commit inverso)
+
+--- git reset ---
+It should be used only to reset local copies, not changes shared with other developers.
+There is no way to recover the resetted copy.
+It can be used to remove changes in the commit are, staging area or local working dir changes.
+git reset <filename> (on a staged file, removes the file from the staging area. The file retain the changes in the working dir and is marked as modifed, ready to be staged again)
+git reset (with staged files, like the previous command but act on the whole staging area without any particular reference to any file)
+git reset --hard (with staged files, like the previous command but also removes changes in the local working dir, leaving it clean)
+git reset <commit-id> (with committed files, delete the commit, its history and brings the reset changes unstaged, to allow to stage and commit them again)
+git reset --hard <commit-id> (with committed file, deletes the commit, its history and the staging area. All changes past the commit-id are lost)
+
+--- git clean ---
+git clean (Removes all the untracked files from the local working dir, unless clean.requireForce is set to true)
+git clean -f (Removes all the untracked files from the local working dir forcibly (needed when clean.requireForce is set to true)
+git clean -f <path> (Like the previous command, but limited to the path only. Leaves the path directory untouched)
+git clean -df (Removes all the untracked files and directories from the local working dir)
+git clean -xf (Removes all the untracked files from the local working dir plus the files that git ignores (put in the .gitignore file)
+git clean -n (Makes a dry-run git clean showing which files will be removed)
+
+- 9 - Pushing into GitHub
+git remote -v (Shows which remote repo is attached to the local repo)
+git remote add origin https://github.com/mjordan79/remote-repo.git
+git pull origin master (Pull from the remote repo)
+git push -u origin master (Push to repo for the first time after adding an origin)
+git push origin master (Push to the remote repo)
+
+- 10 - GitHub via SSH
+ssh-keygen -t rsa -b 4096 -C "GitHub SSH Key"
+eval $(ssh-agent -s) <-- Only if you use a passphrase inside the key
+ssh-add ~/.ssh/id_rsa
+git remote -v to test the origin connection
+git remote set-url origin git@github.com:USERNAME/OTHERREPOSITORY.git
+ssh-keygen -p to add the passphrare to the key
+
+- 12 - Git Text Editors
+git config --global core.editor "'c:/program files/sublime text 3/subl.exe' -w"
+
+- 13 - Diff and Merge tool for Git
+git config --global diff.tool p4merge
+git config --global difftool.p4merge.path "C:/Program files/Perforce/p4merge.exe"
+git config --global difftool.prompt false (Prevents confirmation from launching the tool)
+git config --global merge.tool p4merge
+git config --global mergetool.p4merge.path "C:/Program files/Perforce/p4merge.exe"
+git config --global mergetool.prompt false (Prevents confirmation from launching the tool)
+git config --global --list to see the configuration.
+
+- 14 - Git Comparison with git difftool (Perforce Helix Merge, p4merge)
+git diff (difftool) (compares the working dir with the staging area)
+git diff (difftool) -- filename (compares the working dir with the staging area restricted to one file only) 
+git diff (difftool) HEAD (compares the working dir with the commit area)
+git diff (difftool) --staged (--cached) [HEAD] (compares the staging area with the commit area)
+git diff (difftool) <commit-id-a> <commit-id-b> (compares two commits)
+git diff (difftool) HEAD^ HEAD (compares the HEAD and the commit before the HEAD)
+git diff (difftool) HEAD~1 HEAD (like the previous command, but 1 can be substituted with any number)
+git diff (difftool) master origin/master (compares the local repo master branch with the remote master branch)
+git diff (difftool) feature_branch master (compares two branches)
+
+- 15 - git commands
+git log --online --decorate --graph --all
+(--decorate puts names of branches and tags in the shown commits)
+(--graph shows a hyerarchical visualization of commits and branches)
+(--all include commits from other branches)
+git log --stat [--oneline] [filename] (Prints statistics about insertions / deletions)
+git log -p [--oneline] [-n 3](Display the log including the modifications in patch format)
+git log [--oneline] <directory> (Details only relevant for the specified directory)
+git log --oneline --grep="quick-feature" (search the logs for a specific expression or word)
+
+- 16 - git branching and merging techniques
+git branch (Shows available local branches)
+git branch -r (Shows all the remote branches)
+git branch -a (List all branches, including local and remote)
+git branch branch_name (Creates a new branch from the current position)
+git branch -m old_branch_name new_branch_name (Renames a branch)
+git branch -d branch_name (Deletes the branch branch_name only if it's empty)
+git branch -D branch_name (Deletes the branch branch_name even if it's not merged)
+git checkout branch_name (Switch branch from the actual one to branch_name)
+git checkout -b branch_name [starting_branch](Creates a new branch and switch to it, [starting from starting_branch])
+
+-- Fast-Forward Merging --
+Fast Forward merging can happen only if in the target branch there are no changes. The fact that a branch has been created is 
+not visible anymore after the merge (if the branch is removed). This happens because the commits of the branch are just "flattened"
+with the base branch and the branch references point both to the head. No commits involved, so no history.
+
+git merge <branch_to_merge> (In the branch that should receive branch_to_merge, merges branch_to_merge with FF merging)
+
+-- No-Fast-Forward Merging --
+The fact that a branch has been created is preserved in git history, even when, once merged, the branch is deleted.
+This happens because No-FF merge happens through a merge-commit.
+
+git merge <branch_to_merge> --no-ff (In the branch that should receive branch_to_merge, merges branch_to_merge with No-FF merging)
+
+-- 3-Way Merging --
+Happens when both the target branch and the feature branch diverged over time. Creates a merge commit and preserve history.
+It is called 3-Way merging because it needs 3 commits to create the merge commit: the two tips and their common ancestor.
+
+git merge <branch_to_merge> -m "commit message"
+
+-- Merge conflict resolution --
+Merge conflicts can happen only during a 3-Way merge:
+git merge <branch_to_merge>
+
+Git says the automatic merge has failed and needs conflict resolution.
+git mergetool (opens the merge tool for conflict resolution)
+
+- 17 - Commit History Rewriting in git -
+Amending commits means modifying a commit so that it will include subsequent modifications done in other commit.
+git commit --amend --no-edit (Il commit successivo viene incluso nel precedente, senza modificare il commit message (no-edit). commit-id changes. Not to use with pushed changes).
+
+-- git rebase --
+Rebasing is the process of moving a branch into a git base commit.
+git rebase <BASE> (In the branch I want to rebase, where base is a branch, a commit_id, a tag or a reference, like HEAD)
+After this operation, the master branch is behind and a FF-Merge is possible.
+git checkout master
+git merge <branch_to_merge>
+
+-- Rebasing Conflict Resolution --
+git checkout <branch_to_rebase>
+git rebase <BASE> (Start rebasing to BASE, from the branch we want to rebase.)
+git rebase --abort (After a conflict, we can decide to not merge and aborting the rebase, going back to the previous situation before the rebase)
+git mergetool (Start the tool to resolve merge conflicts)
+git rebase --continue (after we've solved conflicts, continue the rebase process)
+git checkout BASE_branch (to finally move to the rebased branch)
+git merge <branch_to_rebase> (to apply a FF merge and update the HEAD)
+git branch -d branch_to_rebase (to finally delete the not needed anymore branch)
+
+-- git fetch --
+Synchronize the origin/master with the remote repository. origin/master is the local copy of the remote repo.
+git fetch (Updated the local copy with the origin)
+git merge (Needed to merge the update with the local branch)
+
+*** Da approfondire ***
+
+-- Git Pull with Rebase --
