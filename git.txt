@@ -1,4 +1,4 @@
-- Concepts
+﻿- Concepts
 Working directory
 Staging area (or index)
 Commit area
