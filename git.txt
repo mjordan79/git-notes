@@ -293,3 +293,23 @@ git push origin --tags (Push all the tags, lightweight and annotated, in the loc
 git push origin <tag_name> (Push to origin a specific tag)
 git push origin :tag_name (Remove a tag from the remote repo (remains locally)
 
+- 19 - Git Toolset -
+-- stashing --
+Stashing means saving the current unfinished work (both local modified files and index) in a temporary storage in order to
+bring the local working dir in a clean state.
+git stash (Will save everything in local dir and staging area as a stash, as long as the files are tracked)
+git stash -u (Will save everything as before, but this time it will include untracked files)
+git stash list (Shows the current stashes present)
+git stash save "stash message" (saves a stash, but this time it associate a message with it, visible in git stash list)
+git stash show <stash_ref> (it displays informations about a stash, including files included, eg. git stash show stash@{2} )
+git stash apply [<stash_ref>](recover the last stashed files or the stash identified by the stash reference)
+git stash drop [<stash_ref>] (delete the latest stash or the stash identified by the stash reference)
+git stash pop [<stash_ref>] (apply and drop the latest stash or the stash identified by the stash reference)
+git stash clean (drops all stashes in a single shot)
+git stash branch <branch_name> (Creates a new branch, switch to it and pop the last stash in it)
+
+git stash apply will recover the last stash but if some files were added to the index, now they appear in modified state.
+To apply a stash maintaining the added status of the previously staged files, the apply command must be executed as:
+git stash apply --index (apply the stash and the staged files remain staged)
+git stash --keep-index (it will stash all the files except those that are in staging area already)
+
