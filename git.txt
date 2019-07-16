@@ -253,6 +253,43 @@ git checkout master
 git merge restore-branch
 git merge -d restore-branch
 
+- 18 - Git tagging -
+-- Lightweight tags --
+Tags are like bookmarks. Two main types: lightweight tags and annotated tags.
+Lightweight tags are just reference to a specific commit.
 
+git tag <tag_name> (Tag the last commit with the tag <tag_name>)
+git show <tag_name> (Show details at the tag_name>
+git tag --list or simply git tag (Show available tags)
 
+-- Annotated tags --
+Annotated tags are stored like full objects. They're checksummed, they contain tagging messages and they can be signed and verified
+using GPG.
+Examples:
+git tag -a <tag_name> -m "tag message" (annotated tag with a tag message)
+git show <tag_name> in this case will show the tag message too, along with other informations.
+
+git cat-file -t <tag_name> (cat-file provides size or type for a particulat git object. -t specify we want type.)
+The previous command prints 'tag' for an annotated tag, 'commit' for a lightweight tag.
+
+-- Searching tags --
+git tag --list (Prints all tags)
+git tag -l "v2.1.5*" (List all tags matched for the regular expression)
+
+-- Comparing, updating, deleting tags --
+git diff <tag_1> <tag_2> (Compare with a diff the two tags)
+git tag -a <tag_name> --force <commit_id> -m "tag message" (Updates the tag_name ponting to the new commit_id with the new tag message)
+git tag -d <tag_name> (Deleting a tag with tag_name)
+git tag -d $(git tag -l) (Deletes all local tags)
+
+-- Pushing tags to remote --
+Tags are never pushed by default by a git push command. Instead, they must be pushed or deleted explicitly (They're pulled though).
+Pushing annotated tags automatically requires to set to true the property push.followTags:
+git config --global push.followTags true
+With this option set, if you push a lightweight tag, all the annotated tags will be pushed.
+Ideally only annotated tags should be pushed to remote in order to avoid tagging clash.
+git push origin --follow-tags (Push to origin all and only annotated tags (among other committed data)
+git push origin --tags (Push all the tags, lightweight and annotated, in the local repo to the remote origin)
+git push origin <tag_name> (Push to origin a specific tag)
+git push origin :tag_name (Remove a tag from the remote repo (remains locally)
 
